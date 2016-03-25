@@ -30,6 +30,7 @@ addons:
     packages:
        - libnuma-dev
        - bison
+       - numactl
 
 before_script:
   - ulimit -c unlimited
