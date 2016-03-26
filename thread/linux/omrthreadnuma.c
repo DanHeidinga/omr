@@ -275,8 +275,10 @@ omrthread_numa_set_node_affinity_nolock(omrthread_t thread, const uintptr_t *nod
 			for (listIndex = 0; (0 == result) && (listIndex < nodeCount); listIndex++) {
 				uintptr_t numaNode = nodeList[listIndex];
 				if (numaNode > numNodes) {
+				printf("#A numaNode > numNodes %i > %i \n", numaNode, numNodes);
 					result = J9THREAD_NUMA_ERR;
 				} else if (0 == numaNodeData[numaNode].cpu_count) {
+				printf("#B J9THREAD_NUMA_ERR_NO_CPUS_FOR_NODE\n");
 					result = J9THREAD_NUMA_ERR_NO_CPUS_FOR_NODE;
 				} else if (0 != threadIsStarted) {
 					cpu_set_t *newSet = &numaNodeData[numaNode].cpu_set;
@@ -292,17 +294,19 @@ omrthread_numa_set_node_affinity_nolock(omrthread_t thread, const uintptr_t *nod
 			memcpy(&affinityCPUs, &defaultAffinityMask, sizeof(cpu_set_t));
 		}
 		if ((threadIsStarted) && (0 == result)) {
+			int retVal;
 #if __GLIBC_PREREQ(2,4) || defined(LINUXPPC)
 			/*
 			 * LIR 902 : On Linux PPC, rolling up tool chain level to VAC 8 on RHEL 4.
 			 * The libc version on RHEL 4 requires 3 arg to sched_setaffinity.
 			 * Note: this will not compile/run properly on RHEL 3.
 			 */
-			if (0 != sched_setaffinity(thread->tid, sizeof(cpu_set_t), &affinityCPUs))
+			if (0 != (retVal = sched_setaffinity(thread->tid, sizeof(cpu_set_t), &affinityCPUs)))
 #else
-			if (0 != sched_setaffinity(thread->tid, &affinityCPUs))
+			if (0 != (retVal = sched_setaffinity(thread->tid, &affinityCPUs)))
 #endif
 			{
+				printf("sched_setaffinity failed = %i\n", retVal);
 				result = J9THREAD_NUMA_ERR;
 			}
 		}
