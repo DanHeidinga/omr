@@ -275,7 +275,7 @@ omrthread_numa_set_node_affinity_nolock(omrthread_t thread, const uintptr_t *nod
 			for (listIndex = 0; (0 == result) && (listIndex < nodeCount); listIndex++) {
 				uintptr_t numaNode = nodeList[listIndex];
 				if (numaNode > numNodes) {
-				printf("#A numaNode > numNodes %i > %i \n", numaNode, numNodes);
+				printf("#A numaNode > numNodes %i > %i \n", (int)numaNode, (int)numNodes);
 					result = J9THREAD_NUMA_ERR;
 				} else if (0 == numaNodeData[numaNode].cpu_count) {
 				printf("#B J9THREAD_NUMA_ERR_NO_CPUS_FOR_NODE\n");
@@ -306,6 +306,13 @@ omrthread_numa_set_node_affinity_nolock(omrthread_t thread, const uintptr_t *nod
 			if (0 != (retVal = sched_setaffinity(thread->tid, &affinityCPUs)))
 #endif
 			{
+			switch(retVal) {
+			case EFAULT:  printf("EFAULT\n"); break;
+			case EINVAL:  printf("EINVAL\n"); break;
+			case EPERM:  printf("EPERM\n"); break;
+			case ESRCH:  printf("ESRCH\n"); break;
+			default: printf("default\n");
+			}
 				printf("sched_setaffinity failed = %i\n", retVal);
 				result = J9THREAD_NUMA_ERR;
 			}
