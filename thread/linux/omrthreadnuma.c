@@ -306,7 +306,7 @@ omrthread_numa_set_node_affinity_nolock(omrthread_t thread, const uintptr_t *nod
 			if (0 != (retVal = sched_setaffinity(thread->tid, &affinityCPUs)))
 #endif
 			{
-			switch(retVal) {
+			switch(errno) {
 			case EFAULT:  printf("EFAULT\n"); break;
 			case EINVAL:  printf("EINVAL\n"); break;
 			case EPERM:  printf("EPERM\n"); break;
