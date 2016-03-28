@@ -897,17 +897,14 @@ static int numaSetAffinityThreadMain(void *arg)
 			status |= EXPECTED_VALID;
 			goto endthread;
 		}
+		printf("Current affinity = %zu\n", currentAffinity);
 
 		/* We used to check that a child thread inherits its parent's affinity. This is Linux behaviour, but not
 		 * AIX or Windows behaviour. We don't rely on, specify or document this behaviour, so don't test it.
 		 */
-#if 0
 		if (currentAffinity != data->expectedAffinity) {
-			PRINTF("Thread's initial affinity is different from parent's. Expected:%zu Actual:%zu\n", data->expectedAffinity, currentAffinity);
-			status |= EXPECTED_VALID;
-			goto endthread;
+			printf("Thread's initial affinity is different from parent's. Expected:%zu Actual:%zu\n", data->expectedAffinity, currentAffinity);
 		}
-#endif
 
 		expectedNodeForNoAffinity = currentAffinity;
 
