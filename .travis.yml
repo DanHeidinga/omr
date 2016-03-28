@@ -38,8 +38,8 @@ before_script:
   - export GTEST_FILTER=*NumaSetAffinity
   - numactl --hardware
   - cat /proc/self/cpuset
-  - ls -al `/proc/self/cpuset`
   - cat /proc/self/status
+  - ls -al /proc/
 # Disable the core dump tests as container based builds don't allow setting
 # core_pattern and don't have apport installed.  This can be removed when
 # apport is available in apt whitelist
